@@ -7,15 +7,11 @@ import reportWebVitals from "./reportWebVitals";
 import store, { history } from "./store";
 import { ConnectedRouter } from "connected-react-router/immutable";
 import { Provider } from "react-redux";
-import Demo from "./components/Demo";
 
 ReactDOM.render(
   <Provider store={store}>
     <ConnectedRouter history={history}>
       <Switch>
-        <Route path="/demo">
-          <Demo />
-        </Route>
         <Route path="/">
           <App />
         </Route>

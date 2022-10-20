@@ -1,12 +1,12 @@
 import { combineReducers } from "redux-immutable";
 
-import demo from "./demoReducer";
+import students from "./studentsReducer";
 import { connectRouter } from "connected-react-router";
 
 const createRootReducer = (history) =>
   combineReducers({
     router: connectRouter(history),
-    demo,
+    students,
   });
 
 export default createRootReducer;

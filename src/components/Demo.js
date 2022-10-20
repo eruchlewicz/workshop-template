@@ -1,58 +1,49 @@
-import { Box, Input, Typography } from "@material-ui/core";
-import { connect } from "react-redux";
-import { getDemoAlbum } from "../selectors/demoSelectors";
-import { fetchDemoAlbum } from "../actions/demoActions";
-import { useEffect, useState } from "react";
-import Button from "@material-ui/core/Button";
-import { Link } from "react-router-dom";
+import React, { memo, useEffect } from 'react';
+import { Route, Switch, useHistory } from 'react-router-dom';
 
-const defaultAlbumId = 1;
+import Container from '@material-ui/core/Container';
+import Grid from '@material-ui/core/Grid';
 
-function Demo({ handleFetchDemoAlbum, demoAlbum }) {
-  const [id, setId] = useState(defaultAlbumId);
+import useStyles from './demoStyles';
+import HomeView from "./HomeView";
+import StudentView from "./StudentView";
+import AddStudentView from "./AddStudentView";
+
+function Demo() {
+  const classes = useStyles();
+  const history = useHistory();
+
+  const newLocation = window.localStorage.getItem('redirectFrom');
 
   useEffect(() => {
-    if (/\d+/.test(id)) {
-      handleFetchDemoAlbum(id);
+    if (newLocation) {
+      window.localStorage.removeItem('redirectFrom');
+      history.push(newLocation);
     }
-  }, [handleFetchDemoAlbum, id]);
-
-  const handleChange = (event) => {
-    const { value } = event.target;
-    setId(parseInt(value) || defaultAlbumId);
-  };
+  }, [newLocation, history]);
 
   return (
-    <Box m={4}>
-      <Box mb={10}>
-        <Link to="/">
-          <Button variant="text">&#8592; Go back</Button>
-        </Link>
-      </Box>
-
-      <Box display="flex" flexDirection="row" alignItems="center" ml={1}>
-        <Box mr={2}>Album id (1-100):</Box>
-        <Box mr={2}>
-          <Input value={id} onChange={handleChange} />
-        </Box>
-      </Box>
-
-      <Box py={2} ml={1}>
-        <Typography variant="h6">Fetched album's title:</Typography>
-        <Typography variant="body1">
-          {demoAlbum?.title ? `"${demoAlbum?.title}"` : "Out of range!"}
-        </Typography>
-      </Box>
-    </Box>
+    <main className={classes.content} id="content">
+      <div className={classes.appBarSpacer} />
+      <Container maxWidth={false} className={classes.container}>
+        <Grid container>
+          <Grid item md={12} lg={12}>
+            <Switch>
+              <Route exact path="/students">
+                <HomeView />
+              </Route>
+              <Route exact path="/students/add">
+                <AddStudentView />
+              </Route>
+              <Route path="/students/:studentId">
+                <StudentView />
+              </Route>
+            </Switch>
+          </Grid>
+        </Grid>
+      </Container>
+    </main>
   );
 }
 
-const mapStateToProps = (state) => ({
-  demoAlbum: getDemoAlbum(state),
-});
-
-const mapDispatchToProps = {
-  handleFetchDemoAlbum: fetchDemoAlbum,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Demo);
+export default memo(Demo);
